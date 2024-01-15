@@ -2,24 +2,27 @@ import { Component } from "react";
 import styles from './searchbar.module.css';
 
 
-class Searchbar extends Component {
+export default class Searchbar extends Component {
     state = {
-        images: [],
-        page: 1,
-        per_page: 12, 
+        search:'', 
     }
 
 
     render() {
+        const { search } = this.state;
+
+
         return (
-          <header className={styles.searchbar}>
+          <header className={styles.header}>
             <form className={styles.form}>
-              <button type="submit" className={styles.button}>
+              <button type="submit" className={styles.btn}>
                 <span className={styles.buttonLabel}>Search</span>
               </button>
 
               <input
-                className={styles.input}
+                        className={styles.input}
+                        name="search"
+                        value={search}
                 type="text"
                 autoComplete="off"
                 autoFocus
@@ -31,4 +34,4 @@ class Searchbar extends Component {
     }
 }
 
-export default Searchbar;
+ 

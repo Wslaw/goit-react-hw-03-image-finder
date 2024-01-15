@@ -1,14 +1,17 @@
-import React from "react";
-import { Component } from "react";
-import styles from './imageGallery.module.css';
+// ImageGallery.js
+import React from 'react';
+import ImageGalleryItem from './ImageGalleryItem';
 
-const ImageGallery = ({ images }) => (
-
-    <ul className={styles.gallery}>
-  {/* {images.map(image) => (
-        
-  )} */}
-</ul>
-)
+const ImageGallery = ({ images, onImageClick }) => (
+  <ul className="ImageGallery">
+    {images.map(image => (
+      <ImageGalleryItem
+        key={image.id}
+        image={image}
+        onClick={() => onImageClick(image)}
+      />
+    ))}
+  </ul>
+);
 
 export default ImageGallery;
