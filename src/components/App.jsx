@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
@@ -15,6 +15,7 @@ class App extends Component {
     showModal: false,
     selectedImage: '',
     hasLoadedMore: false,
+    total: 0,
   };
 
   handleSearchSubmit = async search => {
@@ -58,7 +59,8 @@ class App extends Component {
     try {
       const response = await pixabayApi.fetchImages(search, page);
       this.setState(prevState => ({
-        images: [...prevState.images, ...response],
+        images: [...prevState.images, ...response.hits],
+        total: response.totalHits,
       }));
     } catch (error) {
       console.error('Error fetching images:', error);
@@ -66,10 +68,18 @@ class App extends Component {
       this.setState({ isLoading: false });
     }
   };
+
   handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.setState({ hasLoadedMore: false }); // Сбрасываем флаг после возвращения к началу
   };
+
+  componentDidUpdate(_, prevState) {
+    const { search, page } = this.state;
+    if (search && (search !== prevState.search || page !== prevState.page)) {
+      this.fetchImages();
+    }
+  }
 
   render() {
     const { images, isLoading, showModal, selectedImage, hasLoadedMore } =
@@ -80,7 +90,9 @@ class App extends Component {
         <Searchbar onSubmit={this.handleSearchSubmit} />
         <ImageGallery images={images} onImageClick={this.handleImageClick} />
         {isLoading && <Loader />}
-        {images.length > 0 && <Button onLoadMore={this.handleLoadMore} />}
+        {images.length > 0 && this.state.total > images.length && (
+          <Button onLoadMore={this.handleLoadMore} type="button" />
+        )}{' '}
         {showModal && (
           <Modal image={selectedImage} onClose={this.handleModalClose} />
         )}

@@ -7,7 +7,10 @@ class Searchbar extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.onSubmit(this.state.search);
+    const { search } = this.state;
+    const { onSubmit } = this.props;
+
+    onSubmit(search); // Передаем значение поиска в onSubmit
   };
 
   handleChange = e => {
