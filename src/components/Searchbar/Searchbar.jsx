@@ -1,16 +1,16 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 class Searchbar extends Component {
   state = {
     search: '',
   };
 
-  handleSubmit = e => {
+handleSubmit = e => {
     e.preventDefault();
     const { search } = this.state;
     const { onSubmit } = this.props;
 
-    onSubmit(search); 
+    onSubmit(search); // Передаем значение поиска в onSubmit
   };
 
   handleChange = e => {
