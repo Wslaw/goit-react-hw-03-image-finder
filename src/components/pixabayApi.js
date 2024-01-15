@@ -1,23 +1,31 @@
-import axios from "axios";
-// const { default: axios } = require("axios");
-
-// 'https://pixabay.com/api/?q=cat&page=1&key=40845730-59b552d3cf1577a71be805545&image_type=photo&orientation=horizontal&per_page=12'
-// Функція для запиту повинна бути в окремому файлі, в Арр її лише викликаємо.
+import axios from 'axios';
 
 const API_KEY = '40845730-59b552d3cf1577a71be805545';
-const instance = axios.create({
-  baseUrl: 'https://pixabay.com/api/',
-});
 
-export const fetchImages = async (query, page=1) => {
-    // return instance.get(`?key=${API_KEY}&q=${query}&per_page=12&page=${page}`);
-    try {
-        const response = await instance.get(`?key=${API_KEY}&q=${query}&per_page=12&page=${page}`)
-        return response.data;
+const fetchImages = async (search, page) => {
+  const baseUrl = 'https://pixabay.com/api/';
+  const perPage = 12;
 
-    } catch (error) {
-        console.log('Error', error);
-        throw new Error('Error');
-    }
-}
+  try {
+    const response = await axios.get(baseUrl, {
+      params: {
+        q: search,
+        page,
+        key: API_KEY,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        per_page: perPage,
+      },
+    });
 
+    return response.data.hits;
+  } catch (error) {
+    throw new Error('Error fetching images from Pixabay API');
+  }
+};
+
+const pixabayAPI = {
+  fetchImages,
+};
+
+export default pixabayAPI;

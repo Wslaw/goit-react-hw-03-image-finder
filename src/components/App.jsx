@@ -1,65 +1,97 @@
-import axios from "axios";
-// import Searchbar from "./Searchbar/Searchbar";
-// import ImageGallery from './ImageGallery/ImageGallery';
-// import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
-// import Button from './Button/Button';
-// import Loader from './Loader/Loader';
-// import Modal from "./Modal/Modal";
+import { Component } from 'react';
+import Searchbar from './Searchbar/Searchbar';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
+import Loader from './Loader/Loader';
+import Modal from './Modal/Modal';
+import pixabayApi from './pixabayApi';
 
-import { Component } from "react";
-import { fetchImages } from "./pixabayApi";
-
-
-
-export class App extends Component {
+class App extends Component {
   state = {
     search: '',
     images: [],
-  }
+    page: 1,
+    isLoading: false,
+    showModal: false,
+    selectedImage: '',
+    hasLoadedMore: false,
+  };
 
-  componentDidMount() {
-    axios.get(
-      'https://pixabay.com/api/?key=40845730-59b552d3cf1577a71be805545&q=cat'
-    ).then(({ data })=> {
-      console.log(data)
-      if (data?.length) {
-        this.setState({
-          images: data,
-        })
-      }
+  handleSearchSubmit = async search => {
+    await this.setState({
+      search,
+      images: [],
+      page: 1,
     });
-  }
+
+    this.fetchImages();
+  };
+
+  handleLoadMore = () => {
+    this.setState(
+      prevState => ({ page: prevState.page + 1 }),
+      () => {
+        this.fetchImages();
+        this.setState({ hasLoadedMore: true }); // Устанавливаем флаг после загрузки
+      }
+    );
+  };
+
+  handleImageClick = image => {
+    this.setState({
+      showModal: true,
+      selectedImage: image.largeImageURL,
+    });
+  };
+
+  handleModalClose = () => {
+    this.setState({
+      showModal: false,
+      selectedImage: '',
+    });
+  };
+
+  fetchImages = async () => {
+    const { search, page } = this.state;
+    this.setState({ isLoading: true });
+
+    try {
+      const response = await pixabayApi.fetchImages(search, page);
+      this.setState(prevState => ({
+        images: [...prevState.images, ...response],
+      }));
+    } catch (error) {
+      console.error('Error fetching images:', error);
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
+  handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.setState({ hasLoadedMore: false }); // Сбрасываем флаг после возвращения к началу
+  };
 
   render() {
+    const { images, isLoading, showModal, selectedImage, hasLoadedMore } =
+      this.state;
 
-    const { images } = this.state;
-
-    const elements = images.map(({ id, tags, previewURL }) => (
-      <li>
-        <h3>{tags}</h3>
-        <img src={previewURL} alt="#" />
-        <p>{id}</p>
-      </li>
-    ));
     return (
-      <ul>
-        {elements}
-    </ul>
-    )
+      <div className="App">
+        <Searchbar onSubmit={this.handleSearchSubmit} />
+        <ImageGallery images={images} onImageClick={this.handleImageClick} />
+        {isLoading && <Loader />}
+        {images.length > 0 && <Button onLoadMore={this.handleLoadMore} />}
+        {showModal && (
+          <Modal image={selectedImage} onClose={this.handleModalClose} />
+        )}
+        {hasLoadedMore && window.scrollY > 0 && (
+          <button className="Button" onClick={this.handleScrollToTop}>
+            Scroll to Top
+          </button>
+        )}
+      </div>
+    );
   }
 }
- 
 
-// componentDidUpdate(prevProps, prevState){
-//  if(this.state.page !== prevState.page || this.state.query!== prevState.query ){
-//    fetchImages()
-//  }
-// }
-
-
-
-
-
-
-
- 
+export default App;

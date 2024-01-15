@@ -1,10 +1,8 @@
-import React from "react";
-import styles from './imageGalleryItem.module.css';
+import React from 'react';
 
-
-const ImageGalleryItem = (image) => (
-  <li className = {styles.galleryItem} >
-    <img src={image.webformatURL} alt='' />
+const ImageGalleryItem = ({ image, onClick }) => (
+  <li className="ImageGalleryItem" onClick={onClick}>
+    <img src={image.webformatURL} alt="" className="ImageGalleryItem-image" />
   </li>
 );
 
