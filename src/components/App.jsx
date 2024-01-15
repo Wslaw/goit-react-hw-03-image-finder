@@ -15,7 +15,7 @@ class App extends Component {
     showModal: false,
     selectedImage: '',
     hasLoadedMore: false,
-    total: 0,
+    canLoadMore: true,
   };
 
   handleSearchSubmit = async search => {
@@ -58,9 +58,12 @@ class App extends Component {
 
     try {
       const response = await pixabayApi.fetchImages(search, page);
+          const { hits, totalHits } = response;
+
       this.setState(prevState => ({
         images: [...prevState.images, ...response.hits],
-        total: response.totalHits,
+        total: totalHits,
+        canLoadMore: page < Math.ceil(totalHits / 12),
       }));
     } catch (error) {
       console.error('Error fetching images:', error);
@@ -82,7 +85,7 @@ class App extends Component {
   }
 
   render() {
-    const { images, isLoading, showModal, selectedImage, hasLoadedMore } =
+    const { images, isLoading, showModal,total, selectedImage,canLoadMore, hasLoadedMore } =
       this.state;
 
     return (
@@ -90,7 +93,10 @@ class App extends Component {
         <Searchbar onSubmit={this.handleSearchSubmit} />
         <ImageGallery images={images} onImageClick={this.handleImageClick} />
         {isLoading && <Loader />}
-        {images.length > 0 && this.state.total > images.length && (
+        {/* {images.length > 0 && this.state.total > images.length && (
+          <Button onLoadMore={this.handleLoadMore} type="button" />
+        )} */}
+        {canLoadMore && images.length > 0 && total > images.length && (
           <Button onLoadMore={this.handleLoadMore} type="button" />
         )}{' '}
         {showModal && (
