@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 const Modal = ({ image, onClose }) => (
   <div className="Overlay" onClick={onClose}>
     <div className="Modal">

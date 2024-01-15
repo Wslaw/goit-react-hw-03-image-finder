@@ -1,4 +1,3 @@
-// pixabayApi.js
 
 import axios from 'axios';
 
