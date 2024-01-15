@@ -1,20 +1,9 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 class Searchbar extends Component {
   state = {
     search: '',
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    const { search } = this.state;
-    const { onSubmit } = this.props;
-
-    onSubmit(search); // Передаем значение поиска в onSubmit
-  };
-
-  handleChange = e => {
-    this.setState({ search: e.target.value });
+    images: [],
   };
 
   render() {
