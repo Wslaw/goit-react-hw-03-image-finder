@@ -58,7 +58,7 @@ class App extends Component {
 
     try {
       const response = await pixabayApi.fetchImages(search, page);
-          const { hits, totalHits } = response;
+          const { totalHits } = response;
 
       this.setState(prevState => ({
         images: [...prevState.images, ...response.hits],
